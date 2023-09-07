@@ -27,14 +27,16 @@ public class Employee implements Serializable {
 
     private Integer status;
 
+    @TableField(fill = FieldFill.INSERT)//公共字段填充策略 : 插入时,填充字段
     private LocalDateTime createTime;
 
+    @TableField(fill = FieldFill.INSERT_UPDATE)//公共字段填充策略 : 插入或更新时,填充字段
     private LocalDateTime updateTime;
 
-    @TableField(fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT)//公共字段填充策略 : 插入时,填充
     private Long createUser;
 
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @TableField(fill = FieldFill.INSERT_UPDATE)//公共字段填充策略 : 插入或更新时,填充字段
     private Long updateUser;
 
 }
