@@ -83,7 +83,7 @@ public class EmployeeController {
         //1.设置初始密码
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));//加密初始密码
 
-        //设置 创建时间和更新时间
+        /*//设置 创建时间和更新时间
         employee.setCreateTime(LocalDateTime.now());
         employee.setUpdateTime(LocalDateTime.now());
 
@@ -92,7 +92,7 @@ public class EmployeeController {
 
         //设置 创建人和更新人
         employee.setCreateUser(empId);
-        employee.setUpdateUser(empId);
+        employee.setUpdateUser(empId);*/
 
         //保存到数据库
         employeeService.save(employee);
@@ -134,12 +134,13 @@ public class EmployeeController {
     public R<String> update(HttpServletRequest request, @RequestBody  Employee employee){
         log.info(employee.toString());
 
-        //从session中取出 ,当前登录的员工id
+        /*//从session中取出 ,当前登录的员工id
         Long empId = (Long)request.getSession().getAttribute("employee");
+
         //设置更新操作人
         employee.setUpdateUser(empId);
         //设置更新时间
-        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());*/
 
         //保存 修改到数据库
         employeeService.updateById(employee);

@@ -1,6 +1,7 @@
 package com.ithema.reggie.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.ithema.reggie.common.BaseContext;
 import com.ithema.reggie.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -40,7 +41,8 @@ public class LoginCheckFilter implements Filter {
                 "/backend/**",
                 "/front/**",
                 "/employee/login",
-                "/employee/logout"
+                "/employee/logout",
+                "/common/**"
         };
         //2.判断本次请求是否需要处理
         boolean check = check(urls, requestURI);
@@ -52,9 +54,15 @@ public class LoginCheckFilter implements Filter {
             return;
         }
 
-        //4.如果不放行,就检查登录状态
+        //4.如果不放行,就检查登录状态,登录了 就放行
         if(request.getSession().getAttribute("employee")!=null){
             log.info("用户已登录,用户id为: {}",request.getSession().getAttribute("employee"));
+
+            //从session中取出当前登录的员工的id
+            Long empId = (Long) request.getSession().getAttribute("employee");
+            //将empId 保存到当前线程中
+            BaseContext.setCurrentId(empId);
+
             filterChain.doFilter(request,response);
             return;
         }

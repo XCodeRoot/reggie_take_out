@@ -20,8 +20,19 @@ public class GlobalExceptionHandler {
             return R.error(split[2]+"已存在");
         }
 
-
-
         return R.error("未知错误");
+    }
+
+    /** 处理异常 : 打印到前端 , 删除已经存在关联的分类
+     *
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(CustomException.class)
+    public R<String> exceptionHandler(CustomException ex){
+        log.error(ex.getMessage());
+
+
+        return R.error(ex.getMessage());
     }
 }
