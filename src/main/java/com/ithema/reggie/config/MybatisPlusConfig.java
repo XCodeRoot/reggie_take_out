@@ -8,6 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MybatisPlusConfig {
 
+    /** 分页拦截器
+     *
+     * @return
+     */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor(){
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
