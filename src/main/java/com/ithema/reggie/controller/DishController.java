@@ -71,6 +71,27 @@ public class DishController {
     }
 
 
+    /** 添加套餐时,回显的 可供选择的 分类好的 个大菜系的 菜品
+     *
+     * @param dish
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Dish>> list(Dish dish){
+        //查询条件对象
+        LambdaQueryWrapper<Dish> queryWrapper=new LambdaQueryWrapper<>();
+        //添加分类的条件,前端选择各种菜系,我们根据菜系的 category_id 来查询
+        queryWrapper.eq(dish!=null,Dish::getCategoryId,dish.getCategoryId());
+        //添加查询条件,正在起售的菜品
+        queryWrapper.eq(Dish::getStatus,1);
+        //添加排序条件
+        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+        List<Dish> list = dishService.list(queryWrapper);
+
+        return R.success(list);
+    }
+
+
 
 
     @GetMapping("/page")
