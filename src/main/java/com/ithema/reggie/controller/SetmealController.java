@@ -62,9 +62,26 @@ public class SetmealController {
 
         log.info("ids={}",ids);
         setmealService.removeWithDish(ids);
-        return null;
+        return R.success("删除套餐成功");
     }
 
+
+    /** 在前端页面,显示 套餐的列表,及其对象信息
+     *
+     * @param setmeal
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Setmeal>> list( Setmeal setmeal){//前端传了categoryId 和 status两个
+        LambdaQueryWrapper<Setmeal> queryWrapper=new LambdaQueryWrapper<>();
+        //根据 categoryId和status 查出 多个 setmeal对象
+        queryWrapper.eq(setmeal.getCategoryId()!=null,Setmeal::getCategoryId,setmeal.getCategoryId());
+        queryWrapper.eq(setmeal.getStatus()!=null,Setmeal::getStatus,setmeal.getStatus());
+        queryWrapper.orderByDesc(Setmeal::getUpdateTime);
+        List<Setmeal> list = setmealService.list(queryWrapper);
+        //返回给前端
+        return R.success(list);
+    }
 
 
 

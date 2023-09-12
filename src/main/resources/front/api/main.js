@@ -1,5 +1,5 @@
 //获取所有的菜品分类
-function categoryListApi() {
+function categoryListApi() {//页面初始化时,要和cartListApi同时成功
     return $axios({
       'url': '/category/list',
       'method': 'get',
@@ -25,7 +25,7 @@ function setmealListApi(data) {
 }
 
 //获取购物车内商品的集合
-function cartListApi(data) {
+function cartListApi(data) {//页面初始化时,要和categoryListApi同时成功
     return $axios({
         'url': '/shoppingCart/list',
         'method': 'get',

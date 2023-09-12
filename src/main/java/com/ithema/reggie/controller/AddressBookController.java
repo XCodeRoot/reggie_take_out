@@ -21,7 +21,7 @@ public class AddressBookController {
     private AddressBookService addressBookService;
 
 
-    /** 新增地址
+    /** 保存地址
      *
      * @param addressBook
      * @return
@@ -33,7 +33,7 @@ public class AddressBookController {
         log.info(addressBook.toString());
         //保存到数据库
         addressBookService.save(addressBook);
-        return null;
+        return R.success("添加地址成功");
     }
 
 
@@ -43,7 +43,7 @@ public class AddressBookController {
      * @return
      */
     @PutMapping("/default")
-    public R<AddressBook> serDefault(@RequestBody AddressBook addressBook ){
+    public R<AddressBook> setDefault(@RequestBody AddressBook addressBook ){
         //update的条件构造器
         LambdaUpdateWrapper<AddressBook> queryWrapper=new LambdaUpdateWrapper<>();
         //将表里 该用户的 所有地址 的 is_default字段全部改成 0
@@ -93,6 +93,16 @@ public class AddressBookController {
         }
         return R.success(addressBook);
     }
+
+    @PutMapping
+    public R<AddressBook> update(@RequestBody AddressBook addressBook){
+        //根据地址id锁定 数据库里当前地址
+        addressBookService.updateById(addressBook);//就是这么简单
+
+        return R.success(addressBook);
+    }
+
+
 
 
     /** 查询指定用户的全部地址信息

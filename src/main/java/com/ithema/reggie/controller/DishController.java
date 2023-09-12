@@ -6,6 +6,7 @@ import com.ithema.reggie.common.R;
 import com.ithema.reggie.dto.DishDto;
 import com.ithema.reggie.entity.Category;
 import com.ithema.reggie.entity.Dish;
+import com.ithema.reggie.entity.DishFlavor;
 import com.ithema.reggie.service.CategoryService;
 import com.ithema.reggie.service.DishFlavorService;
 import com.ithema.reggie.service.DishService;
@@ -71,13 +72,14 @@ public class DishController {
     }
 
 
-    /** 添加套餐时,回显的 可供选择的 分类好的 个大菜系的 菜品
+    /** v2.0 添加套餐时,回显的 可供选择的 分类好的 个大菜系的 菜品 以及 口味信息 , 所以返回 List<DishDto>
+     *  v1.0 添加套餐时,回显的 可供选择的 分类好的 个大菜系的 菜品
      *
      * @param dish
-     * @return
+     * @return  R<List<DishDto>>
      */
     @GetMapping("/list")
-    public R<List<Dish>> list(Dish dish){
+    public R<List<DishDto>> list(Dish dish){
         //查询条件对象
         LambdaQueryWrapper<Dish> queryWrapper=new LambdaQueryWrapper<>();
         //添加分类的条件,前端选择各种菜系,我们根据菜系的 category_id 来查询
@@ -88,7 +90,23 @@ public class DishController {
         queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         List<Dish> list = dishService.list(queryWrapper);
 
-        return R.success(list);
+        List<DishDto> dishDtoList = list.stream().map((item)->{
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item,dishDto);//把父类的属性,全部复制过去
+            //下面查找当前dish对应的口味信息 , 然后装进dishDto的 List<DishFlavor> flavors 里
+            LambdaQueryWrapper<DishFlavor> dishFlavorLambdaQueryWrapper =new LambdaQueryWrapper<>();
+            //根据dish_id 查询口味信息 where dish_id= ?
+            dishFlavorLambdaQueryWrapper.eq(DishFlavor::getDishId,item.getId());
+            //取出口味信息
+            List<DishFlavor> dishFlavors = dishFlavorService.list(dishFlavorLambdaQueryWrapper);
+            //装进dto里
+            dishDto.setFlavors(dishFlavors);
+            //返回
+            return dishDto;
+        }).collect(Collectors.toList());
+
+
+        return R.success(dishDtoList);
     }
 
 
@@ -143,4 +161,24 @@ public class DishController {
     }
 
 
+//    /** v2.0
+//     *  v1.0 添加套餐时,回显的 可供选择的 分类好的 个大菜系的 菜品
+//     *
+//     * @param dish
+//     * @return
+//     */
+//    @GetMapping("/list")
+//    public R<List<Dish>> list(Dish dish){
+//        //查询条件对象
+//        LambdaQueryWrapper<Dish> queryWrapper=new LambdaQueryWrapper<>();
+//        //添加分类的条件,前端选择各种菜系,我们根据菜系的 category_id 来查询
+//        queryWrapper.eq(dish!=null,Dish::getCategoryId,dish.getCategoryId());
+//        //添加查询条件,正在起售的菜品
+//        queryWrapper.eq(Dish::getStatus,1);
+//        //添加排序条件
+//        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+//        List<Dish> list = dishService.list(queryWrapper);
+//
+//        return R.success(list);
+//    }
 }
