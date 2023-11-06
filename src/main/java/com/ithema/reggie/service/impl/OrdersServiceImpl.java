@@ -12,6 +12,7 @@ import com.ithema.reggie.service.*;
 import com.ithema.reggie.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -35,7 +36,8 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     private AddressBookService addressBookService;
 
     @Override
-    public R<String> submit(Orders orders) {
+    @Transactional
+    public void submit(Orders orders) {
         //获得当前用户id
         Long userId = BaseContext.getCurrentId();
         //根据用户id,查数据库里的 购物车信息
@@ -105,6 +107,6 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         orderDetailService.saveBatch(orderDetailList);
         //清空购物车
         shoppingCartService.remove(queryWrapper);//使用刚开始用的queryWrapper
-        return null;
+
     }
 }

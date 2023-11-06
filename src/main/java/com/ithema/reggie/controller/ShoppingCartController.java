@@ -41,7 +41,7 @@ public class ShoppingCartController {
             //如果是添加菜品, 根据 dish_id  查是否存在
             shoppingCartLambdaQueryWrapper.eq(ShoppingCart::getDishId,shoppingCart.getDishId());
         }else{
-            //如果是添加套餐 ,根据 setmeal_id 和 user_id 查是否存在
+            //如果是添加套餐 ,根据 setmeal_id 查是否存在
             shoppingCartLambdaQueryWrapper.eq(ShoppingCart::getSetmealId,shoppingCart.getSetmealId());
         }
         //查询当前菜品或者套餐是否 已经存在在购物车里

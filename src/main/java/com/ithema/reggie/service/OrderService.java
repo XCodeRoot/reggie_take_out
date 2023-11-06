@@ -7,5 +7,5 @@ import com.ithema.reggie.entity.Orders;
 
 
 public interface OrderService extends IService<Orders> {
-    R<String> submit(Orders orders);
+    void submit(Orders orders);
 }
