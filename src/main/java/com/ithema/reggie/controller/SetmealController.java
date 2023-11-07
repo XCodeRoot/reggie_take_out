@@ -3,6 +3,7 @@ package com.ithema.reggie.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ithema.reggie.common.R;
+import com.ithema.reggie.dto.DishDto;
 import com.ithema.reggie.dto.SetmealDto;
 import com.ithema.reggie.entity.Category;
 import com.ithema.reggie.entity.Dish;
@@ -13,6 +14,8 @@ import com.ithema.reggie.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +47,7 @@ public class SetmealController {
      * @return
      */
     @PostMapping
+    @CacheEvict(value = "setmeal",key="#setmealDto.categoryId +'_'+#setmealDto.status")
     public R<String> save(@RequestBody SetmealDto setmealDto){
         log.info(setmealDto.toString());
         //保存套餐,同时保存 套餐和菜品的关联关系
@@ -58,6 +62,8 @@ public class SetmealController {
      * @return
      */
     @DeleteMapping
+//    @CacheEvict(value = "setmeal",allEntries = true)//如果删除了套餐,就立马清空所有套餐缓存
+    @CacheEvict(value = "setmeal",key="#setmeal.categoryId +'_'+#setmeal.status")
     public R<String> delete(@RequestParam("ids") List<Long> ids ){
 
         log.info("ids={}",ids);
@@ -72,6 +78,8 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/list")
+    //有就从缓存拿,没有就查数据库,然后再缓存
+    @Cacheable(value = "setmeal",key="#setmeal.categoryId +'_'+#setmeal.status")
     public R<List<Setmeal>> list( Setmeal setmeal){//前端传了categoryId 和 status两个
         LambdaQueryWrapper<Setmeal> queryWrapper=new LambdaQueryWrapper<>();
         //根据 categoryId和status 查出 多个 setmeal对象
@@ -83,7 +91,17 @@ public class SetmealController {
         return R.success(list);
     }
 
-
+    /** 修改套餐时 , 回显一下套餐信息
+     *
+     * @param id
+     * @return
+     */
+//    @GetMapping("/{id}")
+//    public R<Setmeal> get(@PathVariable Long id){
+//
+//        //错了
+//        return R.success(setmealService.getById(id));
+//    }
 
     @GetMapping("/page")
     public R<Page> page(int page,int pageSize,String name){
